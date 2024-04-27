@@ -1,0 +1,29 @@
+
+<html>
+<h1 class="title">{TITLE}</h1>
+    <style>
+{CSS}
+    </style>
+    <body>
+    <div id="leftDiv" class="crosswordContainer">
+        <div class="crosswordDiv">
+            <table id="crosswordTable" class="crosswordTable">
+{CROSSWORD}
+            </table>
+        </div>
+        <div id="rightDiv" class="rightDiv">
+            <div class="clueDiv">
+{CLUES}
+            </div>
+            <div class="clueDiv">
+                <button onclick="check()">Check</button>
+            </div>
+        </div>
+    </div>
+    </body>
+    <script>
+        var solution = {SOLUTIONBASE64};
+        var dimCol = {COLUMNDIMENSION};
+{JS}
+    </script>
+</html>

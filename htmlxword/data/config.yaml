@@ -1,0 +1,18 @@
+
+superScript: "<sup class=\"superscript-number\">{REPLACE}</sup>"
+letterBlock: >
+    <td class='input-block' row={ROW} column={COLUMN}>
+        <div class='input-container'>
+            {SUPER_SCRIPT}
+            <input row={ROW} column={COLUMN} class='character' maxlength=1 type='text'>
+        <div>
+    </td>
+blankBlock: >
+    <td row={ROW} column={COLUMN}>
+        <input class='block' maxlength=1 type='text' disabled>
+    </td>
+crossWordRowHtml: "\t\t<tr>\n{ROW_CONTENT}\n\t\t</tr>"
+clueHtml: "{CLUE_NUMBER} {CLUE_TEXT}"
+clueListDown: "\t\t<div class=\"clueList\" id=\"down\">\n\t\t\t<h3 class=\"clueListHeading\">Down</h3>\n{}\t\t</div>"
+clueListAcross: "\t\t<div class=\"clueList\" id=\"across\">\n\t\t\t<h3 class=\"clueListHeading\">Across</h3>\n{}\t\t</div>"
+clueListItem: "\t\t\t<li class=\"hint\" direction={DIRECTION} length={LENGTH} row={ROW} column={COLUMN} clueNumber={CLUE_NUMBER}>{CLUE_NUMBER} {CLUE_TEXT}</li>\n"
