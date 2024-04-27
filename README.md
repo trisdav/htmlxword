@@ -1,8 +1,7 @@
 # htmlxword
 ## htmlxword is
-A python library that can create a interactive crossword on static page using html and javascript.
-## htmlxword depends on
-The python library genxword, which creates crosswords and various formats. This uses genxword to create a layout for the crossword, and then builds a crossword in html and javascript. Genxword has several dependenices, I would refer to that project to determine the dependencies.
+A python library that can create a interactive crossword, from an input text file, on a static page using html and javascript.
+
 ## htmlxword usage
 * Basic usage:
 ```bash
@@ -27,6 +26,9 @@ chapter A section marker in a book.
 | '-j' | '--javascript' | "Path to a custom javascript file." |
 | '-m' | '--html-tempalte' | "Path to a custom html template file." |
 
+## htmlxword depends on
+The python library genxword, which creates crosswords and various formats. This uses genxword to create a layout for the crossword, and then builds a crossword in html and javascript. Genxword has several dependenices, I would refer to that project to determine the dependencies.
+
 ## Configurability
 The heart of configurability of this project is in html_xword_template.html.
 Inside that file there are strings like {JS}, {CLUE} which define where to insert
@@ -44,9 +46,6 @@ advise viewing the template files for figuring out how to configure the outputs.
 * clueListDown - Defines the list which holds the Down clues.
 * clueListAcross - Defines the list whcih holds the Across clues.
 * clueListItem - Defines an item in the clue list.
-
-## How is htmlxword different from genxword
-Genxword does not export to html/javascript. Htmlxword only exports to html/javascript. Genxword exports to predefined crossword formats. Htmlxword attempts to provide a configurable format.
 
 
 
