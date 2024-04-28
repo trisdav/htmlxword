@@ -53,7 +53,7 @@ def main():
     parser.add_argument('-j', '--javascript', dest='js', default='', help="Path to a custom javascript file.")
     parser.add_argument('-m', '--html-tempalte', dest='html', default='', help="Path to a custom html template file.")
     parser.add_argument('--print-config', dest="printConfig", action="store_true", help="Print the contents of the default config.yaml.")
-    parser.add_argument('--printcss', dest="printCss", action="store_true" , help="Print the contents of the default csstemplate.css.")
+    parser.add_argument('--print-css', dest="printCss", action="store_true" , help="Print the contents of the default csstemplate.css.")
     parser.add_argument('--print-javascript', dest="printJs", action="store_true", help="Print the contents of the default jstemplate.js.")
     parser.add_argument('--print-html', dest="printHtml", action="store_true", help="Print the contnets of the default html_xword_template.html.")
     args = parser.parse_args()
