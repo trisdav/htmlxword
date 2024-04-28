@@ -75,7 +75,8 @@ def getGen(input):
 
 def staticSite(name, input, title="", customHtml="", customCss="", customJs="", customYaml=""):
     gen = getGen(input)
-    calc = gengrid(gen)
+    calc = Crossword(gen.nrow, gen.ncol, '-', gen.wordlist)
+    print(calc.compute_crossword())
 
     htmlFormat = ""
     htmlValues = {"CROSSWORD":"", "CLUES":"", "SOLUTIONBASE64":"", "CSS":"", "JS":"", "TITLE":title}
@@ -114,30 +115,29 @@ def staticSite(name, input, title="", customHtml="", customCss="", customJs="", 
     htmlValues["CLUES"] += cluesAsLists(efs, configStruct)
 
     # Create the rows
-    solution = [['#' if col == '-' else col for col in row] for row in calc.grid]
-    rowIdx=0
-    for row in solution:
+    rowIdx = 0
+    for row in calc.grid:
         newRow = ""
         # Create cells
         colIdx=0
         for col in row:
-            if (col == "#"):
+            if (col == "-"):
                 newRow += configStruct["blankBlock"].format(**{"ROW":rowIdx,"COLUMN":colIdx})
             else:
                 # Look for where to place the word number
-                firstWord=False
-                wordNumber=0
+                firstWord = False
+                wordNumber = 0
                 for word in efs.wordlist:
                     if(word[2] == rowIdx and word[3] == colIdx):
-                        firstWord=True
-                        wordNumber=word[5]
+                        firstWord = True
+                        wordNumber = word[5]
                         break
                 rc = {"ROW":str(rowIdx), "COLUMN":str(colIdx), "SUPER_SCRIPT":""}
                 if firstWord:
                     rc["SUPER_SCRIPT"] = configStruct["superScript"].format(**{"REPLACE":str(wordNumber)})
                 newRow += configStruct["letterBlock"].format(**rc)
-            colIdx+=1
-        rowIdx+=1
+            colIdx += 1
+        rowIdx += 1
         htmlValues["CROSSWORD"] += "\n" + configStruct["crossWordRowHtml"].format(**{"ROW_CONTENT":newRow})
 
     # Modify word list to be :
@@ -157,19 +157,6 @@ def staticSite(name, input, title="", customHtml="", customCss="", customJs="", 
     htmlFormat = htmlFormat.format(**htmlValues)
     with open(name, 'w') as html_file:
         html_file.write(htmlFormat)
-
-
-def gengrid(gen):
-    i = 0
-    while 1:
-        calc = Crossword(gen.nrow, gen.ncol, '-', gen.wordlist)
-        print(calc.compute_crossword())
-        if float(len(calc.best_wordlist))/len(gen.wordlist) < 0.9 and i < 5:
-            gen.nrow += 2; gen.ncol += 2
-            i += 1
-        else:
-            break
-    return calc
 
 if __name__ == "__main__":
     # This is a test script.
