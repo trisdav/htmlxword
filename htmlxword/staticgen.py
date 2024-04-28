@@ -52,7 +52,31 @@ def cluesAsLists(efs, configStruct):
     clues = configStruct["clueListDown"].format(downClues) + configStruct["clueListAcross"].format(acrossClues)
     return clues
 
-def staticSite(name, gen, calc, title="", customHtml="", customCss="", customJs="", customYaml=""):
+def genFromFile(input):
+    gen = Genxword(auto=True, mixmode=False)
+    with open(input) as infile:
+        gen.wlist(infile)
+    gen.grid_size()
+    return gen
+
+def genFromList(input):
+    gen = Genxword(auto=True, mixmode=False)
+    gen.wlist(input, len(input))
+    gen.grid_size()
+    return gen
+
+def getGen(input):
+    gen = None
+    if isinstance(input, list):
+        gen = genFromList(input)
+    elif isinstance(input, str):
+        gen = genFromFile(input)
+    return gen
+
+def staticSite(name, input, title="", customHtml="", customCss="", customJs="", customYaml=""):
+    gen = getGen(input)
+    calc = gengrid(gen)
+
     htmlFormat = ""
     htmlValues = {"CROSSWORD":"", "CLUES":"", "SOLUTIONBASE64":"", "CSS":"", "JS":"", "TITLE":title}
     configStruct = {}
@@ -149,7 +173,6 @@ def gengrid(gen):
 
 if __name__ == "__main__":
     # This is a test script.
-    gen = Genxword(auto=True, mixmode=False)
     words = [
         'Happy',
         'Mystery',
@@ -162,8 +185,5 @@ if __name__ == "__main__":
         'Strong',
         'Airy'
     ]
-    gen.wlist(words, 10)
-    gen.grid_size()
-    calc = gengrid(gen)
 
-    staticSite("test.html", gen, calc, "test title")
+    staticSite("test.html", words, "test title")
