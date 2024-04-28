@@ -19,12 +19,16 @@ chapter A section marker in a book.
 
 | short | long | description |
 | ----------- | ----------- | ----------- |
-| '-o' | '--output' | "What the output file should be named." |
-| '-t' | '--title' | "Add a title to the crossword page." |
-| '-y' | '--config-yaml' | "Path to a custom yaml config file." |
-| '-c' | '--css-template' | "Path to a custom css file." |
-| '-j' | '--javascript' | "Path to a custom javascript file." |
-| '-m' | '--html-tempalte' | "Path to a custom html template file." |
+| -o | --output | What the output file should be named. |
+| -t | --title | Add a title to the crossword page. |
+| -y | --config-yaml | Path to a custom yaml config file. |
+| -c | --css-template | Path to a custom css file. |
+| -j | --javascript | Path to a custom javascript file. |
+| -m | --html-tempalte | Path to a custom html template file. |
+|      | --print-config | Print the contents of the default config.yaml. |
+|      | --print-css | Print the contents of the default csstemplate.css. |
+|      | --print-javascript | Print the contents of the default jstemplate.js. |
+|      | --print-html | Print the contnets of the default html_xword_template.html. |
 
 ## htmlxword depends on
 The python library genxword, which creates crosswords and various formats. This uses genxword to create a layout for the crossword, and then builds a crossword in html and javascript. Genxword has several dependenices, I would refer to that project to determine the dependencies.
