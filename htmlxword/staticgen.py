@@ -16,10 +16,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 #!/bin/python3
-from htmlxword import htmlxword
+from . import htmlxword
 import os
 def staticSite(name, input, title="", customHtml="", customCss="", customJs="", customYaml=""):
-    xword = htmlxword()
+    xword = htmlxword.htmlxword()
     if (customHtml):
         xword.setHtmlPath(customHtml)
     if (customCss):
