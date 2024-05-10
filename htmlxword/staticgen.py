@@ -73,49 +73,19 @@ def getGen(input):
         gen = genFromFile(input)
     return gen
 
-def staticSite(name, input, title="", customHtml="", customCss="", customJs="", customYaml=""):
-    gen = getGen(input)
-    calc = Crossword(gen.nrow, gen.ncol, '-', gen.wordlist)
-    print(calc.compute_crossword())
+def loadTemplate(defaultTemplate, customTemplate):
+    templatePath = defaultTemplate
+    templateString = ""
+    if (customTemplate != ""):
+        templatePath = customTemplate
 
-    htmlFormat = ""
-    htmlValues = {"CROSSWORD":"", "CLUES":"", "SOLUTIONBASE64":"", "CSS":"", "JS":"", "TITLE":title}
-    configStruct = {}
-    
-    # Set up custom inputs.
-    htmlTemplatePath = os.path.join(base_dir, "data", "html_xword_template.html")
-    if(customHtml != ""):
-        htmlTemplatePath = customHtml
+    with open(templatePath) as templateStream:
+        templateString = templateStream.read()
+    return templateString
 
-    cssPath = os.path.join(base_dir, "data", 'csstemplate.css')
-    if(customCss != ""):
-        cssPath = customCss
-
-    jsPath = os.path.join(base_dir, "data", 'jstemplate.js')
-    if(customJs != ""):
-        jsPath = customJs
-
-    yamlPath = os.path.join(base_dir, "data", 'config.yaml')
-    if(customYaml != ""):
-        yamlPath = customYaml
-
-    with open(htmlTemplatePath) as htmlTemplateFile:
-        htmlFormat = htmlTemplateFile.read()
-    with open(cssPath) as cssTemplateFile:
-        htmlValues["CSS"] = cssTemplateFile.read()
-    with open(jsPath) as jsTemplateFile:
-        htmlValues["JS"] = jsTemplateFile.read()
-    with open(yamlPath) as configFile:
-        configStruct = yaml.safe_load(configFile)
-
-    efs = Exportfiles(gen.nrow, gen.ncol, calc.best_grid, calc.best_wordlist)
-    efs.order_number_words()
-    efs.wordlist
-
-    htmlValues["CLUES"] += cluesAsLists(efs, configStruct)
-
-    # Create the rows
+def getCrosswordGrid(efs, configStruct, calc):
     rowIdx = 0
+    crosswordGrid = ""
     for row in calc.grid:
         newRow = ""
         # Create cells
@@ -138,8 +108,10 @@ def staticSite(name, input, title="", customHtml="", customCss="", customJs="", 
                 newRow += configStruct["letterBlock"].format(**rc)
             colIdx += 1
         rowIdx += 1
-        htmlValues["CROSSWORD"] += "\n" + configStruct["crossWordRowHtml"].format(**{"ROW_CONTENT":newRow})
+        crosswordGrid += "\n" + configStruct["crossWordRowHtml"].format(**{"ROW_CONTENT":newRow})
+    return crosswordGrid
 
+def formatWordList(efs):
     # Modify word list to be :
     # [ WORD, len(word), row(start), col(start), direction, clue number ]
     newWordList = efs.wordlist
@@ -149,8 +121,43 @@ def staticSite(name, input, title="", customHtml="", customCss="", customJs="", 
         else:
             newWordList[i][4] = "across"
         newWordList[i][1] = len(newWordList[i][0])
-    # Encode it as json, then encode it has base64 to prevent peeking.
-    htmlValues["SOLUTIONBASE64"] = str(base64.b64encode(bytes(json.dumps(newWordList), 'ascii'))).lstrip("b")
+    return newWordList
+
+def base64List(newWordList):
+    # Encode it as json, then encode it as base64.
+    return str(base64.b64encode(bytes(json.dumps(newWordList), 'ascii'))).lstrip("b")
+
+def staticSite(name, input, title="", customHtml="", customCss="", customJs="", customYaml=""):
+    gen = getGen(input)
+    calc = Crossword(gen.nrow, gen.ncol, '-', gen.wordlist)
+    print(calc.compute_crossword())
+    # Default template paths.
+    htmlPath = os.path.join(base_dir, "data", "html_xword_template.html")
+    cssPath = os.path.join(base_dir, "data", 'csstemplate.css')
+    jsPath = os.path.join(base_dir, "data", 'jstemplate.js')
+    yamlPath = os.path.join(base_dir, "data", 'config.yaml')
+
+    htmlFormat = ""
+    htmlValues = {"CROSSWORD":"", "CLUES":"", "SOLUTIONBASE64":"", "CSS":"", "JS":"", "TITLE":title}
+    configStruct = {}
+    
+    htmlFormat = loadTemplate(htmlPath, customHtml)
+    htmlValues["CSS"] = loadTemplate(cssPath, customCss)
+    htmlValues["JS"] = loadTemplate(jsPath, customJs)
+    configStruct = yaml.safe_load(loadTemplate(yamlPath, customYaml))
+
+    efs = Exportfiles(gen.nrow, gen.ncol, calc.best_grid, calc.best_wordlist)
+    efs.order_number_words()
+    efs.wordlist
+
+    # Create list of clues.
+    htmlValues["CLUES"] += cluesAsLists(efs, configStruct)
+    # Create the crossword grid.
+    htmlValues["CROSSWORD"] = getCrosswordGrid(efs, configStruct, calc)
+    # Format the word list for the html page.
+    newWordList = formatWordList(efs)
+    # Base64 the word list to prevent peeking.
+    htmlValues["SOLUTIONBASE64"] = base64List(newWordList)
     # Set the column dimension.
     htmlValues["COLUMNDIMENSION"] = gen.ncol
     # Build the whole html
