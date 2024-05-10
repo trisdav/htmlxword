@@ -27,7 +27,7 @@ function check() {
         if(word[4] == "down") {
             for (let j = 0; j < wordLen; j++) {
                 row = (startRow + j);
-                selector = "[row=\"" + row + "\"][column=\"" + startCol + "\"]";
+                selector = "input[row=\"" + row + "\"][column=\"" + startCol + "\"]";
                 inputField = document.querySelector(selector);
                 if (inputField.value.toUpperCase() != word[0][j]) {
                     window.confirm("Try again");
@@ -38,7 +38,7 @@ function check() {
         else {
             for (let j = 0; j < wordLen; j++) {
                 column = (startCol + j);
-                selector = "[row=\"" + startRow + "\"][column=\"" + column + "\"]";
+                selector = "input[row=\"" + startRow + "\"][column=\"" + column + "\"]";
                 inputField = document.querySelector(selector);
                 if (inputField.value.toUpperCase() != word[0][j]) {
                     window.confirm("Try again");
