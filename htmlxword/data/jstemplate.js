@@ -74,7 +74,6 @@ function moveToHighlighted(index, highlightedFields) {
 }
 
 // This attemps to guess where the next character is.
-//  Many assumptions are made and it is generally bad.
 function guessMove(index) {
     var inputFields = document.querySelectorAll('input');
     var thisCell = index;
@@ -183,7 +182,6 @@ function hintListHighlightListeners() {
                     li.classList.remove("hintHighlight")
                 }
             });
-            console.log(hint);
             hint.classList.add("hintHighlight");
             highlightRange(hint.getAttribute("direction"), hint.getAttribute("row"), hint.getAttribute("column"), hint.getAttribute("length"));
         });
@@ -196,7 +194,11 @@ function firstLetterHighlightListeners() {
     var firstLetterInputs = document.querySelectorAll("div.input-container");
     firstLetterInputs.forEach( input => {
         input.addEventListener("click", function(event) {
-            var superscript = Number(input.getElementsByClassName("superscript-number")[0].innerHTML);
+            var superscriptHtml = input.getElementsByClassName("superscript-number");
+            var superscript = NaN;
+            if (superscriptHtml.length > 0) {
+                superscript = Number(superscriptHtml[0].innerHTML);
+            }
             var hints = document.querySelectorAll("li.hint");
             for (var i = 0; i < hints.length; ++i) {
                 if (hints[i].getAttribute("clueNumber") == superscript && ! hints[i].classList.contains("hintHighlight")) {
@@ -215,7 +217,6 @@ function firstLetterHighlightListeners() {
 }
 firstLetterHighlightListeners();
 
-
 function highlightRange(direction, row, col, len) {
     var inputFieldList = document.querySelectorAll('input');
     var startIndex = (Number(row) * Number(dimCol)) + Number(col);
@@ -233,6 +234,8 @@ function highlightRange(direction, row, col, len) {
             inputFieldList[index].classList.add("hintHighlight");
         }
     }
+    inputFieldList[startIndex].focus();
+    inputFieldList[startIndex].select();
 }
 
 function deHighlight() {
