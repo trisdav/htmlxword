@@ -2,6 +2,10 @@
 ## htmlxword is
 A python library that can create a interactive crossword, from an input text file, on a static page using html and javascript.
 
+## Demo
+See a demo of a created crossword on github.
+https://trisdav.github.io/htmlxword-pages/
+
 ## htmlxword usage
 * Basic usage:
 ```bash
