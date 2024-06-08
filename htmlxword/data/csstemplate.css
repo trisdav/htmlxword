@@ -67,6 +67,34 @@
 .hintHighlight {
     background-color: #ebb215
 }
+@media (prefers-color-scheme: dark) {
+    .character {
+        background-color: #28272a;
+        border-color: #687377;
+        color: #f3f3f3;
+    }
+    .hintHighlight {
+        background-color: #1f92d3;
+    }
+    .superscript-number {
+        color: #f3f3f3;
+    }
+    .block {
+        background-color: #687377;
+        border-color: #687377;
+    }
+    .button {
+        background-color: #28272a;
+        color: #f3f3f3;
+    }
+    body {
+        background-color: #28272a;
+        color: #f3f3f3;
+    }
+    body a {
+        color: #809fff;
+    }
+}
 @media print {
     .input-container {
         border: 2px solid #000;
