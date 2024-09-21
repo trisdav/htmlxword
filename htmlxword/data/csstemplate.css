@@ -47,7 +47,6 @@
     padding: 0;
     margin: auto;
     display: flex;
-    justify-content: center;
 }
 .rightDiv {
     overflow-y: auto;
