@@ -23,6 +23,7 @@ import base64
 import json
 import yaml
 import os
+
 class htmlxword:
     def __init__(self):
         base_dir = os.path.abspath(os.path.dirname(__file__))
@@ -31,6 +32,7 @@ class htmlxword:
         self.cssPath = os.path.join(base_dir, "data", 'csstemplate.css')
         self.jsPath = os.path.join(base_dir, "data", 'jstemplate.js')
         self.yamlPath = os.path.join(base_dir, "data", 'config.yaml')
+        self.withClueMap = {}
     
     def setHtmlPath(self, path):
         self.htmlPath = path
@@ -43,14 +45,62 @@ class htmlxword:
     
     def setYamlPath(self, path):
         self.yamlPath = path
+    
+    # Json format is this {["word":"hint","clue":"A Clue","hintTitle":"Click For a Hint","hint":"Another word for a clue."],[...]}
+    def parseJson(self, input):
+        with open(input, "r") as inputFile:
+            inputStr = inputFile.read()
+            inputObj = json.loads(inputStr)
+            self.setWithClueMap(inputObj)
+            inputData = []
+            hintId = 0
+            for word in inputObj:
+                hintText = ""
+                if("hint" in word):
+                    hintIdStr = 'hint' + str(hintId)
+                    hintTitle = "Hint"
+                    if("hintTitle" in word):
+                        hintTitle = word["hintTitle"]
+
+                    hintButton = '<a class="hintStyle" onclick=setDisplay("' + hintIdStr + '")>' + hintTitle + "</a>"
+                    hintOverlay = '<div class="overlay" onclick=\'noneDisplay("' + hintIdStr + '")\' id="' + hintIdStr + '"><p class="hintText" id="' + hintIdStr + 'Text">' + word["hint"] + "</p></div>"
+                    hintText = " " + hintButton + hintOverlay
+                    
+                inputData.append(word["word"] + " " + word["clue"] + hintText)
+                hintId += 1
+        return inputData
+    
+    def setWithClueMap(self, input):
+        self.withClueMap = {} # reset
+        for wordStruct in input:
+            if ("with" in wordStruct):
+                self.withClueMap[wordStruct["word"].upper()] = input[wordStruct["with"]-1]["word"].upper()
+
+    def getWithClueText(self, efs, word):
+        withText = ""
+        if(word in self.withClueMap):
+            searchFor = self.withClueMap[word]
+            for withClue in efs.wordlist:
+                if searchFor == withClue[0]:
+                    direction = "Across"
+                    if (withClue[4] == 1):
+                        direction = "Down"
+                    withText = "With " + str(withClue[5]) +  " " + direction + ","
+        return withText
 
     def cluesAsLists(self, efs, configStruct):
         # Create clue section
         acrossClues = ""
         downClues = ""
+
         # Create a list of the clues
         for clue in efs.wordlist:
             word, clue_text, row, col, vertical, num = clue[:6]
+
+            # If the user wants two clues to be related.
+            if(self.withClueMap):
+                clue_text = self.getWithClueText(efs, word) + clue_text
+
             # Assume direction is across until seen otherwise.
             direction = "across"
             if (vertical == 1):
@@ -141,6 +191,7 @@ class htmlxword:
         return str(base64.b64encode(bytes(json.dumps(newWordList), 'ascii'))).lstrip("b")
 
     def createStaticPage(self, name, input, title=""):
+
         gen = self.getGen(input)
         calc = Crossword(gen.nrow, gen.ncol, '-', gen.wordlist)
         print(calc.compute_crossword())

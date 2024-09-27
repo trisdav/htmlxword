@@ -30,7 +30,8 @@ function check() {
                 selector = "input[row=\"" + row + "\"][column=\"" + startCol + "\"]";
                 inputField = document.querySelector(selector);
                 if (inputField.value.toUpperCase() != word[0][j]) {
-                    window.confirm("Try again");
+                    document.getElementById("checkOverlayText").textContent = "Something isn't right, try again."
+                    document.getElementById("checkOverlay").style.display = "block";
                     return;
                 }
             }
@@ -41,14 +42,17 @@ function check() {
                 selector = "input[row=\"" + startRow + "\"][column=\"" + column + "\"]";
                 inputField = document.querySelector(selector);
                 if (inputField.value.toUpperCase() != word[0][j]) {
-                    window.confirm("Try again");
+                    document.getElementById("checkOverlayText").textContent = "Something isn't right, try again."
+                    document.getElementById("checkOverlay").style.display = "block";
                     return;
                 }
             }
         }
     }
     // If we make it this far then it didn't fail.
-    window.confirm("YOU DID IT!!!");
+    document.getElementById("checkOverlayText").textContent = "🎉 You got it! You're awesome. 🎊"
+    document.getElementById("checkOverlayText").className = "overlayTextWin";
+    document.getElementById("checkOverlay").style.display = "block";
 }
 
 function moveToCell(index) {
@@ -243,4 +247,12 @@ function deHighlight() {
     for(var i = 0; i < inputFieldList.length; ++i) {
         inputFieldList[i].classList.remove("hintHighlight");
     }
+}
+
+function noneDisplay(elementId) {
+    document.getElementById(elementId).style.display = "none";
+}
+
+function setDisplay(elementId, display="block") {
+    document.getElementById(elementId).style.display = display;
 }

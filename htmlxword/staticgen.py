@@ -18,7 +18,7 @@
 #!/bin/python3
 from . import htmlxword
 import os
-def staticSite(name, input, title="", customHtml="", customCss="", customJs="", customYaml=""):
+def staticSite(name, input, title="", customHtml="", customCss="", customJs="", customYaml="", json=False):
     xword = htmlxword.htmlxword()
     if (customHtml):
         xword.setHtmlPath(customHtml)
@@ -28,21 +28,24 @@ def staticSite(name, input, title="", customHtml="", customCss="", customJs="", 
         xword.setJsPath(customJs)
     if (customYaml):
         xword.setYamlPath(customYaml)
+    if (json):
+        input = xword.parseJson(input)
     xword.createStaticPage(name, input, title)
+
 
 if __name__ == "__main__":
     # This is a test script.
     words = [
-        'Happy',
-        'Mystery',
-        'Secretive',
-        'Idealistic',
-        'Bubbly',
-        'Sad',
-        'Luck',
-        'Indescribable',
-        'Strong',
-        'Airy'
+        'Happy Joy',
+        'Mystery Riddle',
+        'Secretive Hush',
+        'Idealistic Optimistic',
+        'Bubbly Soap',
+        'Sad Cry',
+        'Luck Draw',
+        'Indescribable Confusing',
+        'Strong Manly',
+        'Airy Fluffy, light'
     ]
 
     staticSite("test.html", words, "test title")
