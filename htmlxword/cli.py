@@ -65,5 +65,3 @@ def main():
         printConfigs(args.printConfig, args.printCss, args.printJs, args.printHtml)
     else:
         parser.error("Invalid inputs.")
-
-main()
