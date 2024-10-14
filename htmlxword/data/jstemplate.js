@@ -50,7 +50,7 @@ function check() {
         }
     }
     // If we make it this far then it didn't fail.
-    document.getElementById("checkOverlayText").textContent = "🎉 You got it! You're awesome. 🎊"
+    document.getElementById("checkOverlayText").textContent = "\u{1F389} You got it! You're awesome. \u{1F38A}";;
     document.getElementById("checkOverlayText").className = "overlayTextWin";
     document.getElementById("checkOverlay").style.display = "block";
 }
@@ -137,9 +137,64 @@ inputFieldList.forEach(function(input, index) {
         lastCell = -1;
     });
     // User presses tab to change input
-     input.addEventListener('keydown', function(event) {
-        if (event.key === 'Tab') {
+        input.addEventListener('keydown', function(event) {
+        if (event.key === 'Tab' && event.shiftKey) {
+            event.preventDefault(); // Prevent the default tab behavior
             lastCell = -1;
+            var index = 0;
+            for ( let i = 0; i < inputFieldList.length ; ++i) {
+                if (inputFieldList[i].getAttribute("row") == document.activeElement.getAttribute("row") && inputFieldList[i].getAttribute("column") == document.activeElement.getAttribute("column")) {
+                    index = i;
+                    break;
+                }
+            }
+            var newIndex = -1;
+            for ( let i = highlightedSelection.length; i >= 0; --i) {
+                if (highlightedSelection[i] < index) {
+                    newIndex = highlightedSelection[i];
+                    break;
+                }
+            }
+            if (newIndex == -1) { // Not found
+                if (highlightedHintIndex == 0) {
+                    hintList[hintList.length-1].click();
+                }
+                else {
+                    hintList[highlightedHintIndex-1].click();
+                }
+                // hintList.click() will update highlightedSelection.
+                newIndex = highlightedSelection[highlightedSelection.length-1];
+            }
+            inputFieldList[newIndex].focus();
+        }
+        else if (event.key === 'Tab') {
+            event.preventDefault(); // Prevent the default tab behavior
+            lastCell = -1;
+            var index = 0;
+            for ( let i = 0; i < inputFieldList.length ; ++i) {
+                if (inputFieldList[i].getAttribute("row") == document.activeElement.getAttribute("row") && inputFieldList[i].getAttribute("column") == document.activeElement.getAttribute("column")) {
+                    index = i;
+                    break;
+                }
+            }
+            var newIndex = -1;
+            for ( let i = 0; i < highlightedSelection.length; ++i) {
+                if (highlightedSelection[i] > index) {
+                    newIndex = highlightedSelection[i];
+                    break;
+                }
+            }
+            if (newIndex == -1) { // Not found
+                if (highlightedHintIndex == hintList.length-1) {
+                    hintList[0].click();
+                }
+                else {
+                    hintList[highlightedHintIndex+1].click();
+                }
+                // hintList.click() will update highlightedSelection.
+                newIndex = highlightedSelection[0];
+            }
+            inputFieldList[newIndex].focus();
         }
     });
     // When focused on a cell, select all existing text.
@@ -154,8 +209,10 @@ function setClueDivMaxHeight() {
 }
 setClueDivMaxHeight();
 
+var hintList = document.querySelectorAll('li.hint');
+
 function removeHintHighlight(event) {
-    var hintList = document.querySelectorAll('li.hint');
+
     hintList.forEach(hint => {
         if (!event.target.closest(".hint")) {
             hint.classList.remove(".hintHighlight");
@@ -164,7 +221,6 @@ function removeHintHighlight(event) {
 }
 
 document.addEventListener("click", function(event) {
-    var hintList = document.querySelectorAll('.hint');
     hintList.forEach(hint => {
         // If the item clicked on is not of the class hint, then
         //  something that isn't a hint has been clicked and so
@@ -178,16 +234,15 @@ document.addEventListener("click", function(event) {
 
 function hintListHighlightListeners() {
     // Highlight for hint strings
-    var hintList = document.querySelectorAll('.hint');
-    hintList.forEach(hint => {
+    hintList.forEach((hint, index) => {
         hint.addEventListener('click', function(event) {
-             hintList.forEach( li => {
+                hintList.forEach( li => {
                 if( li !== hint) {
                     li.classList.remove("hintHighlight")
                 }
             });
             hint.classList.add("hintHighlight");
-            highlightRange(hint.getAttribute("direction"), hint.getAttribute("row"), hint.getAttribute("column"), hint.getAttribute("length"));
+            highlightRange(hint.getAttribute("direction"), hint.getAttribute("row"), hint.getAttribute("column"), hint.getAttribute("length"), index);
         });
     });
 }
@@ -211,7 +266,7 @@ function firstLetterHighlightListeners() {
                         bubbles: true,
                         cancelable: true,
                         view: window
-                      });
+                        });
                     hints[i].dispatchEvent(clickEvent);
                     return; // Exit the loop.
                 }
@@ -221,28 +276,35 @@ function firstLetterHighlightListeners() {
 }
 firstLetterHighlightListeners();
 
-function highlightRange(direction, row, col, len) {
-    var inputFieldList = document.querySelectorAll('input');
+var highlightedSelection = [];
+var inputFieldList = document.querySelectorAll('input');
+var highlightedHintIndex = 0;
+function highlightRange(direction, row, col, len, index) {
+    highlightedHintIndex = index;
     var startIndex = (Number(row) * Number(dimCol)) + Number(col);
     var wordLength = Number(len);
     deHighlight();
     if (direction == "down") {
         for(var i = 0; i < wordLength; ++i) {
             index = startIndex + (dimCol * i);
+            highlightedSelection.push(index);
             inputFieldList[index].classList.add("hintHighlight");
         }
     }
     else {
         for(var i = 0; i < wordLength; ++i) {
             index = startIndex + i;
+            highlightedSelection.push(index);
             inputFieldList[index].classList.add("hintHighlight");
         }
     }
+    highlightedSelection;
     inputFieldList[startIndex].focus();
     inputFieldList[startIndex].select();
 }
 
 function deHighlight() {
+    highlightedSelection = [];
     var inputFieldList = document.querySelectorAll('input');
     for(var i = 0; i < inputFieldList.length; ++i) {
         inputFieldList[i].classList.remove("hintHighlight");
