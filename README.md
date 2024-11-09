@@ -19,6 +19,7 @@ adjective A word or phrase describing an attribute.
 paragraph A section of a piece of writing.
 chapter A section marker in a book.
 ```
+
 * Arguments
 
 | short | long | description |
@@ -29,6 +30,7 @@ chapter A section marker in a book.
 | -c | --css-template | Path to a custom css file. |
 | -j | --javascript | Path to a custom javascript file. |
 | -m | --html-tempalte | Path to a custom html template file. |
+| -s | --json | input format is json |
 |      | --print-config | Print the contents of the default config.yaml. |
 |      | --print-css | Print the contents of the default csstemplate.css. |
 |      | --print-javascript | Print the contents of the default jstemplate.js. |
@@ -37,6 +39,46 @@ chapter A section marker in a book.
 ## htmlxword depends on
 The python library genxword, which creates crosswords and various formats. This uses genxword to create a layout for the crossword, and then builds a crossword in html and javascript. Genxword has several dependenices, I would refer to that project to determine the dependencies.
 
+## JSON input
+The crossword clues can also be input as a JSON file. This JSON file supports hints and "with" clues. For example, the answer to the clue "Verb ending with -ing" is "present participle" which is two words. To get around this, clues will be something like
+"With 2 Across, Verb ending with -ing." To use this input format with the cli use the -s flag.
+* json input file
+```
+[
+    {
+        "word":"Noun",
+        "clue":"Person, place, or thing.",
+        "hintTitle":"Hint",
+        "hint":"English 101"
+    },
+    {
+        "word":"adverb",
+        "clue":"A word or phrase that modifies or qualifies an adjective."
+    },
+    {
+        "word":"present",
+        "clue":"Verb ending with -ing",
+        "with":4
+    },
+    {
+        "word":"participle",
+        "clue":"Verb ending with -ing",
+        "with":3
+    },
+    {
+        "word":"adjective",
+        "clue":"A word or phrase describing an attribute."
+    },
+    {
+        "word":"paragraph",
+        "clue":"A section of a piece of writing."
+    },
+    {
+        "word":"chapter",
+        "clue":"A section marker in a book."
+    }
+]
+```
 ## Configurability
 The heart of configurability of this project is in html_xword_template.html.
 Inside that file there are strings like {JS}, {CLUE} which define where to insert

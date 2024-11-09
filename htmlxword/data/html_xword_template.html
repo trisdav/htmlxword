@@ -1,5 +1,6 @@
 
 <html>
+<meta charset="UTF-8">
 <h1 class="title">{TITLE}</h1>
     <style>
 {CSS}
@@ -18,6 +19,9 @@
             <div class="clueDiv">
                 <button onclick="check()">Check</button>
             </div>
+        </div>
+        <div id="checkOverlay" class="overlay" onclick="noneDisplay('checkOverlay')">
+            <p class="overlayText" id="checkOverlayText"></p>
         </div>
     </div>
     </body>

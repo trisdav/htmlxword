@@ -51,7 +51,8 @@ def main():
     parser.add_argument('-y', '--config-yaml', dest='yaml', default='', help="Path to a custom yaml config file.")
     parser.add_argument('-c', '--css-template', dest='css', default='', help="Path to a custom css file.")
     parser.add_argument('-j', '--javascript', dest='js', default='', help="Path to a custom javascript file.")
-    parser.add_argument('-m', '--html-tempalte', dest='html', default='', help="Path to a custom html template file.")
+    parser.add_argument('-m', '--html-template', dest='html', default='', help="Path to a custom html template file.")
+    parser.add_argument('-s', '--json', dest='json', action="store_true", help="Input file is given in the JSON format.")
     parser.add_argument('--print-config', dest="printConfig", action="store_true", help="Print the contents of the default config.yaml.")
     parser.add_argument('--print-css', dest="printCss", action="store_true" , help="Print the contents of the default csstemplate.css.")
     parser.add_argument('--print-javascript', dest="printJs", action="store_true", help="Print the contents of the default jstemplate.js.")
@@ -59,7 +60,7 @@ def main():
     args = parser.parse_args()
 
     if args.infile:
-        staticgen.staticSite(args.output, args.infile, args.title, args.html, args.css, args.js, args.yaml)
+        staticgen.staticSite(args.output, args.infile, args.title, args.html, args.css, args.js, args.yaml, args.json)
     elif (args.printConfig or args.printCss or args.printJs or args.printHtml):
         printConfigs(args.printConfig, args.printCss, args.printJs, args.printHtml)
     else:
